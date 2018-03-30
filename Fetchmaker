@@ -1,0 +1,45 @@
+import numpy as np
+import fetchmaker
+from scipy.stats import binom_test
+from scipy.stats import f_oneway
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+from scipy.stats import chi2_contingency
+rottweiler_tl = fetchmaker.get_tail_length('rottweiler')
+rottweiler_tl_mean = np.mean(rottweiler_tl)
+rottweiler_tl_std = np.std(rottweiler_tl)
+print rottweiler_tl_mean
+print rottweiler_tl_std
+whippet_rescue = fetchmaker.get_is_rescue('whippet')
+num_whippet_rescues = np.count_nonzero(whippet_rescue)
+print num_whippet_rescues
+num_whippet = np.size(whippet_rescue)
+print num_whippet
+pval = binom_test(6, n=100, p = 0.08)
+print pval
+
+whippet_weight = fetchmaker.get_weight('whippet')
+w_weight = np.array(whippet_weight)
+
+terrier_weight = fetchmaker.get_weight('terrier')
+t_weight = np.array(terrier_weight)
+
+pitbull_weight = fetchmaker.get_weight('pitbull')
+p_weight = np.array(pitbull_weight)
+
+fstat, pval2 = f_oneway(w_weight, t_weight, p_weight)
+print pval2
+v = np.concatenate([w_weight, t_weight, p_weight])
+labels = ['Whippet'] * len(w_weight) + ['terrier'] * len(t_weight) + ['pitbull'] * len(p_weight)
+tukey_results = pairwise_tukeyhsd(v, labels, 0.05)
+print tukey_results
+poodle_colors = fetchmaker.get_color('poodle')
+shihtzu_colors = fetchmaker.get_color('shihtzu')
+black = np.count_nonzero(poodle_colors == 'black')
+print black
+color_table = [[17, 10],
+     [13, 36],
+     [8, 6],
+     [52, 41],
+    [10, 7]]
+chi2, pval3, dof, expected = chi2_contingency(color_table)
+print pval3
